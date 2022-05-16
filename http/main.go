@@ -28,7 +28,7 @@ func main() {
 	// }
 
 	// Approach 3
-	// io.Copy(os.Stdout, resp.Body)
+	io.Copy(os.Stdout, resp.Body)
 
 	// Approach 4: custom writer
 	lw := logWriter{}
