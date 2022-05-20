@@ -38,7 +38,7 @@ func main() {
 		// this will block for loop from continuing
 		// so it is "waiting" for messages coming from the changel
 
-		// "function literal" = lambda or anolymous function
+		// "function literal" = lambda or anonymous function
 		go func(link string) {
 			time.Sleep(5 * time.Second)
 			checkLink(link, c)
