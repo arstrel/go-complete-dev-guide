@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"sync"
+	"time"
 )
 
-var wg sync.WaitGroup
+// Site status checker
+
+// Example with a channel
 
 func main() {
 	links := []string{
@@ -17,22 +19,44 @@ func main() {
 		"http://artemio.tech",
 	}
 
+	c := make(chan string)
+
 	for _, val := range links {
-		wg.Add(1)
-		go checkLink(val)
+		go checkLink(val, c)
 	}
 
-	wg.Wait()
+	// // infinite loop. Approach 1
+	// for {
+	// 	// this will block for loop from continuing
+	// 	// so it is "waiting" for messages coming from the changel
+	// 	go checkLink(<-c, c)
+
+	// }
+
+	// loop as long as values coming from the channel. Approach 2
+	for l := range c {
+		// this will block for loop from continuing
+		// so it is "waiting" for messages coming from the changel
+
+		// "function literal" = lambda or anolymous function
+		go func(link string) {
+			time.Sleep(5 * time.Second)
+			checkLink(link, c)
+		}(l)
+
+	}
+
 }
 
-func checkLink(link string) {
-	defer wg.Done()
+func checkLink(link string, c chan string) {
 	_, err := http.Get(link)
 
 	if err != nil {
 		fmt.Println(link, "might be down!")
+		c <- link
 		return
 	}
 
 	fmt.Println(link, "is up!")
+	c <- link
 }
